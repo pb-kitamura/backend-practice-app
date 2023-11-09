@@ -1,2 +1,4 @@
 .env
 .vscode
+db
+node_modules
