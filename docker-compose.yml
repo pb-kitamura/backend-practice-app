@@ -10,8 +10,6 @@ services:
       - /usr/src/node_modules
       - .:/usr/src/app
     command: npm run dev
-    expose:
-      - 3000
     ports:
       - '3000:3000'
 
