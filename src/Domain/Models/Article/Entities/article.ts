@@ -1,30 +1,24 @@
-import { ArticleId } from '../ValueObject/ArticleId'
-import { ArticleTitle } from '../ValueObject/ArticleTitle'
-import { ArticleContent } from '../ValueObject/ArticleContent'
-import { CreatedAt } from '../ValueObject/CreatedAt'
-import { UpdatedAt } from '../ValueObject/UpdatedAt'
+import { ArticleId } from '../valueObject/articleId'
+import { ArticleTitle } from '../valueObject/articleTitle'
+import { ArticleContent } from '../valueObject/articleContent'
+import { CreatedAt } from '../valueObject/createdAt'
+import { UpdatedAt } from '../valueObject/updatedAt'
 import { EntitiesError } from '../../../../http/Errors/EntitiesError'
 export class Article {
-  private articleId: ArticleId
-  private articleTitle: ArticleTitle
-  private articleContent: ArticleContent
-  private createdAt: CreatedAt
-  private updatedAt: UpdatedAt
-
   constructor(
-    articleId: ArticleId,
-    articleTitle: ArticleTitle,
-    articleContent: ArticleContent,
-    createdAt: CreatedAt,
-    updatedAt: UpdatedAt,
+    readonly id: ArticleId,
+    readonly title: ArticleTitle,
+    readonly content: ArticleContent,
+    readonly createdAt: CreatedAt,
+    readonly updatedAt: UpdatedAt,
   ) {
-    if (articleId === null) {
+    if (id === null) {
       throw new EntitiesError(`artileId argument is null`)
     }
-    if (articleTitle === null) {
+    if (title === null) {
       throw new EntitiesError(`artileTitle argument is null`)
     }
-    if (articleContent === null) {
+    if (content === null) {
       throw new EntitiesError(`artileContent argument is null`)
     }
     if (createdAt === null) {
@@ -33,25 +27,5 @@ export class Article {
     if (updatedAt === null) {
       throw new EntitiesError(`updatedAt argument is null`)
     }
-    this.articleId = articleId
-    this.articleTitle = articleTitle
-    this.articleContent = articleContent
-    this.createdAt = createdAt
-    this.updatedAt = updatedAt
-  }
-  public getId() {
-    return this.articleId.get()
-  }
-  public getTitle() {
-    return this.articleTitle.get()
-  }
-  public getContent() {
-    return this.articleContent.get()
-  }
-  public getCreatedAt() {
-    return this.createdAt.get()
-  }
-  public getUpdatedAt() {
-    return this.updatedAt.get()
   }
 }

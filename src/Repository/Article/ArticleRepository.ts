@@ -1,16 +1,16 @@
-import config from '../../Config/database'
-import * as mysql from 'mysql2'
-import { IArticleRepository } from './IArticleRepository'
-import { ArticleId } from '../../Domain/Models/Article/ValueObject/ArticleId'
-import { ArticleTitle } from '../../Domain/Models/Article/ValueObject/ArticleTitle'
-import { ArticleContent } from '../../Domain/Models/Article/ValueObject/ArticleContent'
-import { CreatedAt } from '../../Domain/Models/Article/ValueObject/CreatedAt'
-import { UpdatedAt } from '../../Domain/Models/Article/ValueObject/UpdatedAt'
-import { Article } from '../../Domain/Models/Article/Entities/article'
+import config from '../../config/database'
+import * as mysql from 'mysql2/promise'
+import { IArticleRepository } from './iArticleRepository'
+import { ArticleId } from '../../domain/models/article/valueObject/articleId'
+import { ArticleTitle } from '../../domain/models/article/valueObject/articleTitle'
+import { ArticleContent } from '../../domain/models/article/valueObject/articleContent'
+import { CreatedAt } from '../../domain/models/article/valueObject/createdAt'
+import { UpdatedAt } from '../../domain/models/article/valueObject/updatedAt'
+import { Article } from '../../domain/models/article/entities/article'
 import { DataBaseError } from '../../http/Errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 
-type responseJson = {
+interface responseJson extends mysql.RowDataPacket {
   id: string
   title: string
   content: string
@@ -20,37 +20,23 @@ type responseJson = {
 
 export class ArticleRepository implements IArticleRepository {
   private table = 'article'
-  private connection
-  constructor() {
-    this.connection = mysql.createConnection(config.db)
-    this.connection.connect((err) => {
-      if (err) {
-        throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
-      }
-      console.log('success')
+  public async find(id: ArticleId) {
+    const connection = await mysql.createConnection(config.db).catch(() => {
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
-  }
-  public find(id: ArticleId) {
-    return new Promise<Article | null>((resolve) => {
-      const query = `SELECT * FROM ${this.table} WHERE id = "${id.get()}" `
-      this.connection.query(query, (error: string, result: responseJson[]) => {
-        if (error) {
-          throw new DataBaseError(`${HTTP_ERROR_MESSAGE.DataBaseQueryError} ${error} `)
-        }
-        if (Object.keys(result).length === 0) {
-          resolve(null)
-          return
-        }
-        resolve(
-          new Article(
-            new ArticleId(result[0].id),
-            new ArticleTitle(result[0].title),
-            new ArticleContent(result[0].content),
-            new CreatedAt(result[0].createdAt),
-            new UpdatedAt(result[0].updatedAt),
-          ),
-        )
-      })
+    const sql = `SELECT * FROM ${this.table} WHERE id = ?`
+    const [result] = await connection.execute<responseJson[]>(sql, [id.value]).catch(() => {
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
     })
+    if (Object.keys(result).length === 0) {
+      return null
+    }
+    return new Article(
+      new ArticleId(result[0].id),
+      new ArticleTitle(result[0].title),
+      new ArticleContent(result[0].content),
+      new CreatedAt(result[0].createdAt),
+      new UpdatedAt(result[0].updatedAt),
+    )
   }
 }

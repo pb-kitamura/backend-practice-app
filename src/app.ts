@@ -1,6 +1,6 @@
 import express from 'express'
-import config from './Config/database'
-import { articleRouter } from './Routes/articleRoutes'
+import config from './config/database'
+import { articleRouter } from './routes/articleRoutes'
 
 const app = express()
 app.use(express.json())

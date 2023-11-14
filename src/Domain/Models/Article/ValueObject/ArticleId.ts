@@ -1,14 +1,11 @@
 import { ulid } from 'ulid'
 export class ArticleId {
-  private id
-  constructor(id: string | null = null) {
-    if (id === null) {
-      this.id = ulid()
+  readonly value
+  constructor(value: string | null = null) {
+    if (value === null) {
+      this.value = ulid()
     } else {
-      this.id = id
+      this.value = value
     }
-  }
-  public get() {
-    return this.id
   }
 }

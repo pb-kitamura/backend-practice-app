@@ -1,5 +1,5 @@
-import { Article } from '../Models/Article/Entities/article'
-import { IArticleRepository } from '../../Repository/Article/IArticleRepository'
+import { Article } from '../models/article/entities/article'
+import { IArticleRepository } from '../../repository/article/iArticleRepository'
 
 export class ArticleDomainService {
   private articleRepository: IArticleRepository
@@ -8,7 +8,7 @@ export class ArticleDomainService {
   }
   //重複を確認するメソッド（記事を作成するときに使う）
   public exists(article: Article) {
-    const id = article.getId()
+    const id = article.id.value
     console.log(id)
     //duplicatedArticle = this.articleRepository.find(id)
     //return  duplicatedArticle !== null 後で実装
