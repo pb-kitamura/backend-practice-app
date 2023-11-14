@@ -1,4 +1,4 @@
-import { ValueObjectError } from '../../../../http/Errors/ValueObjectError'
+import { ValueObjectError } from '../../../../http/errors/ValueobjectError'
 
 export class ArticleContent {
   constructor(readonly value: string) {

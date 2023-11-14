@@ -1,13 +1,13 @@
 import config from '../../config/database'
 import * as mysql from 'mysql2/promise'
-import { IArticleRepository } from './iArticleRepository'
-import { ArticleId } from '../../domain/models/article/valueObject/articleId'
-import { ArticleTitle } from '../../domain/models/article/valueObject/articleTitle'
-import { ArticleContent } from '../../domain/models/article/valueObject/articleContent'
-import { CreatedAt } from '../../domain/models/article/valueObject/createdAt'
-import { UpdatedAt } from '../../domain/models/article/valueObject/updatedAt'
-import { Article } from '../../domain/models/article/entities/article'
-import { DataBaseError } from '../../http/errors/dataBaseError'
+import { IArticleRepository } from './IArticleRepository'
+import { ArticleId } from '../../domain/models/article/valueObject/ArticleId'
+import { ArticleTitle } from '../../domain/models/article/valueObject/ArticleTitle'
+import { ArticleContent } from '../../domain/models/article/valueObject/ArticleContent'
+import { CreatedAt } from '../../domain/models/article/valueObject/CreatedAt'
+import { UpdatedAt } from '../../domain/models/article/valueObject/UpdatedAt'
+import { Article } from '../../domain/models/article/entities/Article'
+import { DataBaseError } from '../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 
 interface responseJson extends mysql.RowDataPacket {
@@ -28,7 +28,7 @@ export class ArticleRepository implements IArticleRepository {
     const [result] = await connection.execute<responseJson[]>(sql, [id.value]).catch(() => {
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
     })
-    if (Object.keys(result).length === 0) {
+    if (this.notFindData(result)) {
       return null
     }
     return new Article(
@@ -38,5 +38,9 @@ export class ArticleRepository implements IArticleRepository {
       new CreatedAt(result[0].createdAt),
       new UpdatedAt(result[0].updatedAt),
     )
+  }
+
+  private notFindData(data: object) {
+    return Object.keys(data).length === 0
   }
 }

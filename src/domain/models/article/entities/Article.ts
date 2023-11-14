@@ -1,9 +1,9 @@
-import { ArticleId } from '../valueObject/articleId'
-import { ArticleTitle } from '../valueObject/articleTitle'
-import { ArticleContent } from '../valueObject/articleContent'
-import { CreatedAt } from '../valueObject/createdAt'
-import { UpdatedAt } from '../valueObject/updatedAt'
-import { EntitiesError } from '../../../../http/errors/entitiesError'
+import { ArticleId } from '../valueObject/ArticleId'
+import { ArticleTitle } from '../valueObject/ArticleTitle'
+import { ArticleContent } from '../valueObject/ArticleContent'
+import { CreatedAt } from '../valueObject/CreatedAt'
+import { UpdatedAt } from '../valueObject/UpdatedAt'
+import { EntitiesError } from '../../../../http/errors/EntitiesError'
 export class Article {
   constructor(
     readonly id: ArticleId,
@@ -12,19 +12,19 @@ export class Article {
     readonly createdAt: CreatedAt,
     readonly updatedAt: UpdatedAt,
   ) {
-    if (id === null) {
+    if (!id) {
       throw new EntitiesError(`artileId argument is null`)
     }
-    if (title === null) {
+    if (!title) {
       throw new EntitiesError(`artileTitle argument is null`)
     }
-    if (content === null) {
+    if (!content) {
       throw new EntitiesError(`artileContent argument is null`)
     }
-    if (createdAt === null) {
+    if (!createdAt) {
       throw new EntitiesError(`createdAt argument is null`)
     }
-    if (updatedAt === null) {
+    if (!updatedAt) {
       throw new EntitiesError(`updatedAt argument is null`)
     }
   }
