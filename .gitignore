@@ -1,4 +1,5 @@
 .env
 .vscode
-db
 node_modules
+db
+init
