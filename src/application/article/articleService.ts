@@ -1,6 +1,6 @@
 import { IArticleRepository } from '../../repository/article/iArticleRepository'
 import { ArticleId } from '../../domain/models/article/valueObject/articleId'
-import { NotFoundError } from '../../http/Errors/NotFoundError'
+import { NotFoundError } from '../../http/errors/notFoundError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 export class ArticleApplicationService {
   private articleRepository: IArticleRepository

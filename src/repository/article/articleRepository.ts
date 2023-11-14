@@ -7,7 +7,7 @@ import { ArticleContent } from '../../domain/models/article/valueObject/articleC
 import { CreatedAt } from '../../domain/models/article/valueObject/createdAt'
 import { UpdatedAt } from '../../domain/models/article/valueObject/updatedAt'
 import { Article } from '../../domain/models/article/entities/article'
-import { DataBaseError } from '../../http/Errors/DataBaseError'
+import { DataBaseError } from '../../http/errors/dataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 
 interface responseJson extends mysql.RowDataPacket {

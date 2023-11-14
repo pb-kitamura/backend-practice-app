@@ -2,8 +2,8 @@ import { Response } from 'express'
 import { ArticleRepository } from '../repository/article/articleRepository'
 import { ArticleApplicationService } from '../application/article/articleService'
 import { HTTP_STATUS_CODE } from '../http/httpStatus'
-import { NotFoundError } from '../http/Errors/NotFoundError'
-import { DataBaseError } from '../http/Errors/DataBaseError'
+import { NotFoundError } from '../http/errors/notFoundError'
+import { DataBaseError } from '../http/errors/dataBaseError'
 import { ArticleResponse } from './response/articleResponse'
 export class ArticleController {
   public async getArticle(res: Response, id: string) {
