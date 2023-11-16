@@ -10,7 +10,7 @@ import { Article } from '../../domain/models/article/entities/Article'
 import { Articles } from '../../domain/models/article/entities/Articles'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-import { queryParameters } from '../../adapter/request/ArticleRequest'
+import { QueryParameters } from '../../adapter/request/ArticleRequest'
 
 interface responseJson extends mysql.RowDataPacket {
   id: string
@@ -42,8 +42,7 @@ export class ArticleRepository implements IArticleRepository {
     )
   }
 
-  public async findAll(query: queryParameters) {
-    console.log(query)
+  public async findAll(query: QueryParameters) {
     const connection = await mysql.createConnection(config.db).catch(() => {
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
@@ -57,7 +56,8 @@ export class ArticleRepository implements IArticleRepository {
       return null
     }
     const articles = new Articles()
-    result.map((article) => {
+
+    result.forEach((article) => {
       const articleItem = new Article(
         new ArticleId(article.id),
         new ArticleTitle(article.title),

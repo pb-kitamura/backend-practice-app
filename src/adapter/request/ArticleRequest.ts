@@ -3,7 +3,7 @@ import { QueryParametersError } from '../../http/errors/QueryParametersError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 import { QueryBodyError } from '../../http/errors/QueryBodyError'
 
-export type queryParameters = {
+export type QueryParameters = {
   limit: string
   offset: string
 }
@@ -12,7 +12,7 @@ export type queryBody = {
   content: string
 }
 export class ArticleRequest {
-  readonly query: queryParameters
+  readonly query: QueryParameters
   readonly body: queryBody
   constructor({ query, body }: Request) {
     this.query = {
