@@ -1,7 +1,7 @@
-import { QueryParameters } from '../../adapter/request/ArticleRequest'
+import { QueryParameters } from '../../adapter/request/AllArticleRequest'
 import { Article } from '../../domain/models/article/entities/Article'
 import { Articles } from '../../domain/models/article/entities/Articles'
-import { QueryBody } from '../../adapter/request/ArticleRequest'
+import { QueryBody } from '../../adapter/request/EditArticleRequest'
 export interface IArticleApplicationService {
   get(id: string): Promise<Article>
   getAll(query: QueryParameters): Promise<Articles>

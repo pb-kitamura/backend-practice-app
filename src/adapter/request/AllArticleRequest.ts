@@ -6,23 +6,14 @@ export type QueryParameters = {
   limit: string
   offset: string
 }
-export type QueryBody = {
-  title: string
-  content: string
-}
-export class ArticleRequest {
+export class AllArticleRequest {
   readonly query: QueryParameters
-  readonly body: QueryBody = {
-    title: '',
-    content: '',
-  }
-  constructor({ query, body }: Request) {
+
+  constructor({ query }: Request) {
     this.query = {
       limit: (query.limit as string | undefined) ?? '50',
       offset: (query.offset as string | undefined) ?? '0',
     }
-    if (body.title) this.body.title = body.title
-    if (body.content) this.body.content = body.content
     if (Number(this.query.limit) > 50 || Number(this.query.limit) < 0)
       throw new QueryParametersError(
         `${HTTP_ERROR_MESSAGE.QueryParametersError} limitは0以上50以下`,

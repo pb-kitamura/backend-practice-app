@@ -7,7 +7,8 @@ import { QueryParametersError } from '../../http/errors/QueryParametersError'
 import { ArticleResponse } from '../response/ArticleResponse'
 import { AllArticlesResponse } from '../response/AllArticlesResponse'
 import { ArticleIdResponse } from '../response/ArticleIdResponse'
-import { ArticleRequest } from '../request/ArticleRequest'
+import { AllArticleRequest } from '../request/AllArticleRequest'
+import { EditArticleRequest } from '../request/EditArticleRequest'
 import { QueryBodyError } from '../../http/errors/QueryBodyError'
 
 export class ArticleController {
@@ -31,7 +32,7 @@ export class ArticleController {
 
   public async getAllArticles(res: Response, req: Request) {
     try {
-      const { query } = new ArticleRequest(req)
+      const { query } = new AllArticleRequest(req)
       const articles = await this.articleService.getAll(query)
       const response = new AllArticlesResponse(articles)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
@@ -70,7 +71,7 @@ export class ArticleController {
 
   public async editArticle(res: Response, req: Request) {
     try {
-      const { body } = new ArticleRequest(req)
+      const { body } = new EditArticleRequest(req)
       const article = await this.articleService.edit(req.params.id, body)
       const response = new ArticleIdResponse(article)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
