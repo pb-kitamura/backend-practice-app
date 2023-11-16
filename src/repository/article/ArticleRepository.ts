@@ -10,7 +10,7 @@ import { Article } from '../../domain/models/article/entities/Article'
 import { Articles } from '../../domain/models/article/entities/Articles'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-import { QueryParameters } from '../../adapter/request/ArticleRequest'
+import { QueryBody, QueryParameters } from '../../adapter/request/ArticleRequest'
 
 interface responseJson extends mysql.RowDataPacket {
   id: string
@@ -77,6 +77,18 @@ export class ArticleRepository implements IArticleRepository {
     await connection.execute<responseJson[]>(sql, [id.value]).catch(() => {
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
     })
+  }
+
+  public async edit(id: ArticleId, body: QueryBody) {
+    const connection = await mysql.createConnection(config.db).catch(() => {
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
+    })
+    const sql = `UPDATE ${this.table} SET title = ?, content = ? WHERE id = ?`
+    await connection
+      .execute<responseJson[]>(sql, [body.title, body.content, id.value])
+      .catch(() => {
+        throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
+      })
   }
 
   private notFindData(data: object) {

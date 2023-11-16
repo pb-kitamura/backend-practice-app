@@ -8,6 +8,7 @@ import { ArticleResponse } from '../response/ArticleResponse'
 import { AllArticlesResponse } from '../response/AllArticlesResponse'
 import { ArticleIdResponse } from '../response/ArticleIdResponse'
 import { ArticleRequest } from '../request/ArticleRequest'
+import { QueryBodyError } from '../../http/errors/QueryBodyError'
 
 export class ArticleController {
   constructor(private readonly articleService: IArticleApplicationService) {}
@@ -18,10 +19,13 @@ export class ArticleController {
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
       if (error instanceof NotFoundError) {
-        res.status(HTTP_STATUS_CODE.NotFound).send(error.message)
+        res.status(HTTP_STATUS_CODE.NotFound).send(JSON.stringify({ message: error.message }))
       } else if (error instanceof DataBaseError) {
-        res.status(HTTP_STATUS_CODE.DataBaseError).send(error.message)
-      } else res.status(HTTP_STATUS_CODE.InternalServerError).send(`${error}`)
+        res.status(HTTP_STATUS_CODE.DataBaseError).send(JSON.stringify({ message: error.message }))
+      } else
+        res
+          .status(HTTP_STATUS_CODE.InternalServerError)
+          .send(JSON.stringify({ message: `${error}` }))
     }
   }
 
@@ -54,10 +58,33 @@ export class ArticleController {
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
       if (error instanceof NotFoundError) {
-        res.status(HTTP_STATUS_CODE.NotFound).send(error.message)
+        res.status(HTTP_STATUS_CODE.NotFound).send(JSON.stringify({ message: error.message }))
       } else if (error instanceof DataBaseError) {
-        res.status(HTTP_STATUS_CODE.DataBaseError).send(error.message)
-      } else res.status(HTTP_STATUS_CODE.InternalServerError).send(`${error}`)
+        res.status(HTTP_STATUS_CODE.DataBaseError).send(JSON.stringify({ message: error.message }))
+      } else
+        res
+          .status(HTTP_STATUS_CODE.InternalServerError)
+          .send(JSON.stringify({ message: `${error}` }))
+    }
+  }
+
+  public async editArticle(res: Response, req: Request) {
+    try {
+      const { body } = new ArticleRequest(req)
+      const article = await this.articleService.edit(req.params.id, body)
+      const response = new ArticleIdResponse(article)
+      res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.status(HTTP_STATUS_CODE.NotFound).send(JSON.stringify({ message: error.message }))
+      } else if (error instanceof DataBaseError) {
+        res.status(HTTP_STATUS_CODE.DataBaseError).send(JSON.stringify({ message: error.message }))
+      } else if (error instanceof QueryBodyError) {
+        res.status(HTTP_STATUS_CODE.QueryBodyError).send(JSON.stringify({ message: error.message }))
+      } else
+        res
+          .status(HTTP_STATUS_CODE.InternalServerError)
+          .send(JSON.stringify({ message: `${error}` }))
     }
   }
 }
