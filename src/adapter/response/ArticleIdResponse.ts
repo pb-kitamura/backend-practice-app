@@ -1,5 +1,5 @@
 import { Article } from '../../domain/models/article/entities/Article'
-export class ArticleDeleteResponse {
+export class ArticleIdResponse {
   readonly id
 
   constructor(article: Article) {
