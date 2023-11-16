@@ -7,8 +7,10 @@ import { ArticleContent } from '../../domain/models/article/valueObject/ArticleC
 import { CreatedAt } from '../../domain/models/article/valueObject/CreatedAt'
 import { UpdatedAt } from '../../domain/models/article/valueObject/UpdatedAt'
 import { Article } from '../../domain/models/article/entities/Article'
+import { Articles } from '../../domain/models/article/entities/Articles'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
+import { QueryParameters } from '../../adapter/request/ArticleRequest'
 
 interface responseJson extends mysql.RowDataPacket {
   id: string
@@ -38,6 +40,43 @@ export class ArticleRepository implements IArticleRepository {
       new CreatedAt(result[0].createdAt),
       new UpdatedAt(result[0].updatedAt),
     )
+  }
+
+  public async findAll(query: QueryParameters) {
+    const connection = await mysql.createConnection(config.db).catch(() => {
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
+    })
+    const sql = `SELECT * FROM ${this.table} LIMIT ? OFFSET ?`
+    const [result] = await connection
+      .execute<responseJson[]>(sql, [query.limit, query.offset])
+      .catch(() => {
+        throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
+      })
+    if (this.notFindData(result)) {
+      return null
+    }
+    const items = result.map((item) => {
+      const articleItem = new Article(
+        new ArticleId(item.id),
+        new ArticleTitle(item.title),
+        new ArticleContent(item.content),
+        new CreatedAt(item.createdAt),
+        new UpdatedAt(item.updatedAt),
+      )
+      return articleItem
+    })
+    const articles = new Articles(items, items.length)
+    return articles
+  }
+
+  public async delete(id: ArticleId) {
+    const connection = await mysql.createConnection(config.db).catch(() => {
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
+    })
+    const sql = `DELETE FROM ${this.table} WHERE id = ?`
+    await connection.execute<responseJson[]>(sql, [id.value]).catch(() => {
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
+    })
   }
 
   private notFindData(data: object) {
