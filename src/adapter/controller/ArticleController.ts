@@ -1,4 +1,4 @@
-import { Response } from 'express'
+import { Response, Request } from 'express'
 import { IArticleApplicationService } from '../../application/article/IArticleApplicationService'
 import { HTTP_STATUS_CODE } from '../../http/httpStatus'
 import { NotFoundError } from '../../http/errors/NotFoundError'
@@ -7,8 +7,7 @@ import { QueryParametersError } from '../../http/errors/QueryParametersError'
 import { ArticleResponse } from '../response/ArticleResponse'
 import { AllArticlesResponse } from '../response/AllArticlesResponse'
 import { ArticleIdResponse } from '../response/ArticleIdResponse'
-import { queryParameters } from '../request/QueryParameters'
-import { QueryParameters } from '../request/QueryParameters'
+import { ArticleRequest } from '../request/ArticleRequest'
 
 export class ArticleController {
   constructor(private readonly articleService: IArticleApplicationService) {}
@@ -26,9 +25,9 @@ export class ArticleController {
     }
   }
 
-  public async getAllArticles(res: Response, queryParam: queryParameters) {
+  public async getAllArticles(res: Response, req: Request) {
     try {
-      const query = new QueryParameters(queryParam)
+      const { query } = new ArticleRequest(req)
       const articles = await this.articleService.getAll(query)
       const response = new AllArticlesResponse(articles)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))

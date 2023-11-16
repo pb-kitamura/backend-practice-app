@@ -6,7 +6,7 @@ articleRouter.get('/:id', (req, res) => {
   articleController.getArticle(res, req.params.id)
 })
 articleRouter.get('/', (req, res) => {
-  articleController.getAllArticles(res, req.query)
+  articleController.getAllArticles(res, req)
 })
 articleRouter.delete('/:id', (req, res) => {
   articleController.deleteArticle(res, req.params.id)
