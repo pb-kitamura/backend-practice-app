@@ -55,18 +55,17 @@ export class ArticleRepository implements IArticleRepository {
     if (this.notFindData(result)) {
       return null
     }
-    const articles = new Articles()
-
-    result.forEach((article) => {
+    const items = result.map((item) => {
       const articleItem = new Article(
-        new ArticleId(article.id),
-        new ArticleTitle(article.title),
-        new ArticleContent(article.content),
-        new CreatedAt(article.createdAt),
-        new UpdatedAt(article.updatedAt),
+        new ArticleId(item.id),
+        new ArticleTitle(item.title),
+        new ArticleContent(item.content),
+        new CreatedAt(item.createdAt),
+        new UpdatedAt(item.updatedAt),
       )
-      articles.addItems(articleItem)
+      return articleItem
     })
+    const articles = new Articles(items, items.length)
     return articles
   }
 
