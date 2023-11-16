@@ -7,13 +7,13 @@ export type QueryParameters = {
   limit: string
   offset: string
 }
-export type queryBody = {
+export type QueryBody = {
   title: string
   content: string
 }
 export class ArticleRequest {
   readonly query: QueryParameters
-  readonly body: queryBody
+  readonly body: QueryBody
   constructor({ query, body }: Request) {
     this.query = {
       limit: (query.limit as string | undefined) ?? '50',
