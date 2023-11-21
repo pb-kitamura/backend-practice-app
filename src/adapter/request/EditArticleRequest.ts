@@ -13,7 +13,7 @@ export class EditArticleRequest {
   }
   constructor({ body }: Request) {
     if (!body.title) throw new QueryBodyError(HTTP_ERROR_MESSAGE.QueryBodyError)
-    if (body.title) this.body.title = body.title
+    this.body.title = body.title
     if (body.content) this.body.content = body.content
   }
 }

@@ -82,10 +82,11 @@ export class ArticleController {
         res.status(HTTP_STATUS_CODE.DataBaseError).send(JSON.stringify({ message: error.message }))
       } else if (error instanceof QueryBodyError) {
         res.status(HTTP_STATUS_CODE.QueryBodyError).send(JSON.stringify({ message: error.message }))
-      } else
+      } else {
         res
           .status(HTTP_STATUS_CODE.InternalServerError)
           .send(JSON.stringify({ message: `${error}` }))
+      }
     }
   }
 }
