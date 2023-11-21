@@ -1,6 +1,7 @@
 import { IArticleRepository } from '../../repository/article/IArticleRepository'
-import { ArticleId } from '../../domain/models/article/valueObject/ArticleId'
+import { ArticleId } from '../../domain/article/valueObject/ArticleId'
 import { NotFoundError } from '../../http/errors/NotFoundError'
+import { DuplicateIdError } from '../../http/errors/DuplicateIdError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 import { IArticleApplicationService } from './IArticleApplicationService'
 import { QueryParameters } from '../../adapter/request/AllArticleRequest'
@@ -43,5 +44,18 @@ export class ArticleApplicationService implements IArticleApplicationService {
     }
     await this.articleRepository.edit(articleId, body)
     return article
+  }
+
+  public async create(body: QueryBody) {
+    const articleId = new ArticleId()
+    const article = await this.articleRepository.find(articleId)
+    if (article) {
+      throw new DuplicateIdError(HTTP_ERROR_MESSAGE.NotFound)
+    }
+    const newArticle = await this.articleRepository.create(articleId, body)
+    if (!newArticle) {
+      throw new NotFoundError(HTTP_ERROR_MESSAGE.NotFound)
+    }
+    return newArticle
   }
 }

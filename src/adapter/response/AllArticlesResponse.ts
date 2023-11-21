@@ -1,4 +1,4 @@
-import { Articles } from '../../domain/models/article/entities/Articles'
+import { Articles } from '../../domain/article/entities/Articles'
 import { ArticleResponse } from './ArticleResponse'
 export class AllArticlesResponse {
   items: ArticleResponse[] = []

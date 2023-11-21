@@ -4,12 +4,14 @@ import { HTTP_STATUS_CODE } from '../../http/httpStatus'
 import { NotFoundError } from '../../http/errors/NotFoundError'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { QueryParametersError } from '../../http/errors/QueryParametersError'
+import { QueryBodyError } from '../../http/errors/QueryBodyError'
+import { DuplicateIdError } from '../../http/errors/DuplicateIdError'
 import { ArticleResponse } from '../response/ArticleResponse'
 import { AllArticlesResponse } from '../response/AllArticlesResponse'
 import { ArticleIdResponse } from '../response/ArticleIdResponse'
 import { AllArticleRequest } from '../request/AllArticleRequest'
 import { EditArticleRequest } from '../request/EditArticleRequest'
-import { QueryBodyError } from '../../http/errors/QueryBodyError'
+import { CreateArticleRequest } from '../request/CreateArticleRequest'
 
 export class ArticleController {
   constructor(private readonly articleService: IArticleApplicationService) {}
@@ -79,6 +81,31 @@ export class ArticleController {
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.status(HTTP_STATUS_CODE.NotFound).send(JSON.stringify({ message: error.message }))
+      } else if (error instanceof DataBaseError) {
+        res.status(HTTP_STATUS_CODE.DataBaseError).send(JSON.stringify({ message: error.message }))
+      } else if (error instanceof QueryBodyError) {
+        res.status(HTTP_STATUS_CODE.QueryBodyError).send(JSON.stringify({ message: error.message }))
+      } else {
+        res
+          .status(HTTP_STATUS_CODE.InternalServerError)
+          .send(JSON.stringify({ message: `${error}` }))
+      }
+    }
+  }
+
+  public async createArticle(req: Request, res: Response) {
+    try {
+      const { body } = new CreateArticleRequest(req)
+      const article = await this.articleService.create(body)
+      const response = new ArticleResponse(article)
+      res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.status(HTTP_STATUS_CODE.NotFound).send(JSON.stringify({ message: error.message }))
+      } else if (error instanceof DuplicateIdError) {
+        res
+          .status(HTTP_STATUS_CODE.DuplicateIdError)
+          .send(JSON.stringify({ message: error.message }))
       } else if (error instanceof DataBaseError) {
         res.status(HTTP_STATUS_CODE.DataBaseError).send(JSON.stringify({ message: error.message }))
       } else if (error instanceof QueryBodyError) {

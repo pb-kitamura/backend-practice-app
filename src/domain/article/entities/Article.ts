@@ -3,7 +3,7 @@ import { ArticleTitle } from '../valueObject/ArticleTitle'
 import { ArticleContent } from '../valueObject/ArticleContent'
 import { CreatedAt } from '../valueObject/CreatedAt'
 import { UpdatedAt } from '../valueObject/UpdatedAt'
-import { EntitiesError } from '../../../../http/errors/EntitiesError'
+import { EntitiesError } from '../../../http/errors/EntitiesError'
 export class Article {
   constructor(
     readonly id: ArticleId,

@@ -1,4 +1,4 @@
-import { Article } from '../../domain/models/article/entities/Article'
+import { Article } from '../../domain/article/entities/Article'
 export class ArticleIdResponse {
   readonly id
 
