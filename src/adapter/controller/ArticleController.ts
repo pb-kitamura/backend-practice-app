@@ -100,9 +100,7 @@ export class ArticleController {
       const response = new ArticleResponse(article)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
-      if (error instanceof NotFoundError) {
-        res.status(HTTP_STATUS_CODE.NotFound).send(JSON.stringify({ message: error.message }))
-      } else if (error instanceof DuplicateIdError) {
+      if (error instanceof DuplicateIdError) {
         res
           .status(HTTP_STATUS_CODE.DuplicateIdError)
           .send(JSON.stringify({ message: error.message }))

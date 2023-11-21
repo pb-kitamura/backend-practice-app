@@ -1,12 +1,12 @@
 export const HTTP_STATUS_CODE = {
   OK: 200,
   BadRequest: 400,
-  NotFound: 500,
+  NotFound: 404,
   QueryParametersError: 400,
   QueryBodyError: 400,
   DuplicateIdError: 500,
-  DataBaseError: 505,
-  InternalServerError: 505,
+  DataBaseError: 500,
+  InternalServerError: 500,
 }
 
 export const HTTP_ERROR_MESSAGE = {

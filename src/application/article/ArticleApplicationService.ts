@@ -51,7 +51,7 @@ export class ArticleApplicationService implements IArticleApplicationService {
     const articleId = new ArticleId()
     const article = await this.articleRepository.find(articleId)
     if (article) {
-      throw new DuplicateIdError(HTTP_ERROR_MESSAGE.NotFound)
+      throw new DuplicateIdError(HTTP_ERROR_MESSAGE.DuplicateIdError)
     }
     const newArticle = await this.articleRepository.create(articleId, body)
     if (!newArticle) {
