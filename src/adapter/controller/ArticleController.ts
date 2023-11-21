@@ -13,9 +13,10 @@ import { QueryBodyError } from '../../http/errors/QueryBodyError'
 
 export class ArticleController {
   constructor(private readonly articleService: IArticleApplicationService) {}
-  public async getArticle(res: Response, id: string) {
+
+  public async getArticle(req: Request, res: Response) {
     try {
-      const article = await this.articleService.get(id)
+      const article = await this.articleService.get(req.params.id)
       const response = new ArticleResponse(article)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
@@ -30,7 +31,7 @@ export class ArticleController {
     }
   }
 
-  public async getAllArticles(res: Response, req: Request) {
+  public async getAllArticles(req: Request, res: Response) {
     try {
       const { query } = new AllArticleRequest(req)
       const articles = await this.articleService.getAll(query)
@@ -52,9 +53,9 @@ export class ArticleController {
     }
   }
 
-  public async deleteArticle(res: Response, id: string) {
+  public async deleteArticle(req: Request, res: Response) {
     try {
-      const article = await this.articleService.delete(id)
+      const article = await this.articleService.delete(req.params.id)
       const response = new ArticleIdResponse(article)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
@@ -69,7 +70,7 @@ export class ArticleController {
     }
   }
 
-  public async editArticle(res: Response, req: Request) {
+  public async editArticle(req: Request, res: Response) {
     try {
       const { body } = new EditArticleRequest(req)
       const article = await this.articleService.edit(req.params.id, body)
