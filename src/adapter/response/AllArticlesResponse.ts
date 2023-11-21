@@ -11,7 +11,4 @@ export class AllArticlesResponse {
     })
     this.total = articles.total
   }
-  public toLimitItems(start: number, end: number) {
-    this.items = this.items.slice(start, end)
-  }
 }

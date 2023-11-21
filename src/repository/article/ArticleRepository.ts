@@ -10,8 +10,8 @@ import { Article } from '../../domain/article/entities/Article'
 import { Articles } from '../../domain/article/entities/Articles'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-import { QueryParameters } from '../../adapter/request/AllArticleRequest'
-import { QueryBody } from '../../adapter/request/EditArticleRequest'
+import { QueryBody, QueryParameters } from '../../adapter/request/requestType'
+
 interface responseJson extends mysql.RowDataPacket {
   id: string
   title: string

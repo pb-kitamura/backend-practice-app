@@ -4,8 +4,7 @@ import { NotFoundError } from '../../http/errors/NotFoundError'
 import { DuplicateIdError } from '../../http/errors/DuplicateIdError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 import { IArticleApplicationService } from './IArticleApplicationService'
-import { QueryParameters } from '../../adapter/request/AllArticleRequest'
-import { QueryBody } from '../../adapter/request/EditArticleRequest'
+import { QueryBody, QueryParameters } from '../../adapter/request/requestType'
 
 export class ArticleApplicationService implements IArticleApplicationService {
   constructor(private readonly articleRepository: IArticleRepository) {}
