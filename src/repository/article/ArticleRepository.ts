@@ -10,7 +10,9 @@ import { Article } from '../../domain/article/entities/Article'
 import { Articles } from '../../domain/article/entities/Articles'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-import { QueryBody, QueryParameters } from '../../adapter/request/requestType'
+import { editArticleBody } from '../../adapter/request/EditArticleRequest'
+import { createArticleBody } from '../../adapter/request/CreateArticleRequest'
+import { QueryParameters } from '../../adapter/request/AllArticleRequest'
 
 interface responseJson extends mysql.RowDataPacket {
   id: string
@@ -85,7 +87,7 @@ export class ArticleRepository implements IArticleRepository {
     })
   }
 
-  public async edit(id: ArticleId, body: QueryBody) {
+  public async edit(id: ArticleId, body: editArticleBody) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
@@ -99,7 +101,7 @@ export class ArticleRepository implements IArticleRepository {
       })
   }
 
-  public async create(id: ArticleId, body: QueryBody) {
+  public async create(id: ArticleId, body: createArticleBody) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)

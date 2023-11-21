@@ -4,7 +4,9 @@ import { NotFoundError } from '../../http/errors/NotFoundError'
 import { DuplicateIdError } from '../../http/errors/DuplicateIdError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 import { IArticleApplicationService } from './IArticleApplicationService'
-import { QueryBody, QueryParameters } from '../../adapter/request/requestType'
+import { editArticleBody } from '../../adapter/request/EditArticleRequest'
+import { createArticleBody } from '../../adapter/request/CreateArticleRequest'
+import { QueryParameters } from '../../adapter/request/AllArticleRequest'
 
 export class ArticleApplicationService implements IArticleApplicationService {
   constructor(private readonly articleRepository: IArticleRepository) {}
@@ -35,7 +37,7 @@ export class ArticleApplicationService implements IArticleApplicationService {
     return article
   }
 
-  public async edit(id: string, body: QueryBody) {
+  public async edit(id: string, body: editArticleBody) {
     const articleId = new ArticleId(id)
     const article = await this.articleRepository.find(articleId)
     if (!article) {
@@ -45,7 +47,7 @@ export class ArticleApplicationService implements IArticleApplicationService {
     return article
   }
 
-  public async create(body: QueryBody) {
+  public async create(body: createArticleBody) {
     const articleId = new ArticleId()
     const article = await this.articleRepository.find(articleId)
     if (article) {

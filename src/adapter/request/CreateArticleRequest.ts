@@ -1,9 +1,14 @@
 import { Request } from 'express'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 import { QueryBodyError } from '../../http/errors/QueryBodyError'
-import { QueryBody } from './requestType'
+
+export type createArticleBody = {
+  title: string
+  content: string
+}
+
 export class CreateArticleRequest {
-  readonly body: QueryBody = {
+  readonly body: createArticleBody = {
     title: '',
     content: '',
   }

@@ -1,7 +1,11 @@
 import { Request } from 'express'
 import { QueryParametersError } from '../../http/errors/QueryParametersError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-import { QueryParameters } from './requestType'
+
+export type QueryParameters = {
+  limit: string
+  offset: string
+}
 
 export class AllArticleRequest {
   readonly query: QueryParameters
