@@ -3,10 +3,10 @@ import { articleController } from '../bootstrap'
 
 export const articleRouter = Router()
 articleRouter.get('/:id', (req, res) => {
-  articleController.getArticle(req, res)
+  articleController.findArticle(req, res)
 })
 articleRouter.get('/', (req, res) => {
-  articleController.getAllArticles(req, res)
+  articleController.findAllArticles(req, res)
 })
 articleRouter.delete('/:id', (req, res) => {
   articleController.deleteArticle(req, res)

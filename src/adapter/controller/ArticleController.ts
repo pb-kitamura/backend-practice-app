@@ -1,25 +1,43 @@
 import { Response, Request } from 'express'
-import { IArticleApplicationService } from '../../application/article/IArticleApplicationService'
 import { HTTP_STATUS_CODE } from '../../http/httpStatus'
 import { NotFoundError } from '../../http/errors/NotFoundError'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { QueryParametersError } from '../../http/errors/QueryParametersError'
 import { QueryBodyError } from '../../http/errors/QueryBodyError'
 import { DuplicateIdError } from '../../http/errors/DuplicateIdError'
-import { ArticleResponse } from '../response/ArticleResponse'
-import { AllArticlesResponse } from '../response/AllArticlesResponse'
-import { ArticleIdResponse } from '../response/ArticleIdResponse'
+import { FindArticleResponse } from '../response/FindArticleResponse'
+import { FindAllArticlesResponse } from '../response/FindAllArticlesResponse'
+import { DeleteArticleResponse } from '../response/DeleteArticleResponse'
+import { EditArticleResponse } from '../response/EditArticleResponse'
+import { CreateArticleResponse } from '../response/CreateArticleResponse'
 import { AllArticleRequest } from '../request/AllArticleRequest'
 import { EditArticleRequest } from '../request/EditArticleRequest'
 import { CreateArticleRequest } from '../request/CreateArticleRequest'
+import { FindArticleInput } from '../../application/article/input/FindArticleInput'
+import { FindAllArticlesInput } from '../../application/article/input/FindAllArticlesInput'
+import { DeleteArticleInput } from '../../application/article/input/DeleteArticleInput'
+import { EditArticleInput } from '../../application/article/input/EditArticleInput'
+import { CreateArticleInput } from '../../application/article/input/CreateArticleInput'
+import { FindArticleUseCase } from '../../application/article/usecase/FIndArticleUseCase'
+import { FindAllArticlesUseCase } from '../../application/article/usecase/FindAllArticlesUseCase'
+import { DeleteArticleUseCase } from '../../application/article/usecase/DeleteArticleUseCase'
+import { EditArticleUseCase } from '../../application/article/usecase/EditArticleUseCase'
+import { CreateArticleUseCase } from '../../application/article/usecase/CreateArticleUseCase'
 
 export class ArticleController {
-  constructor(private readonly articleService: IArticleApplicationService) {}
+  constructor(
+    private readonly findArticleUseCase: FindArticleUseCase,
+    private readonly findAllArticlesUseCase: FindAllArticlesUseCase,
+    private readonly createArticleUseCase: CreateArticleUseCase,
+    private readonly deleteArticleUseCase: DeleteArticleUseCase,
+    private readonly editArticleUseCase: EditArticleUseCase,
+  ) {}
 
-  public async getArticle(req: Request, res: Response) {
+  public async findArticle(req: Request, res: Response) {
     try {
-      const article = await this.articleService.get(req.params.id)
-      const response = new ArticleResponse(article)
+      const input = new FindArticleInput(req.params.id)
+      const output = await this.findArticleUseCase.handle(input)
+      const response = new FindArticleResponse(output)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
       if (error instanceof NotFoundError) {
@@ -33,11 +51,12 @@ export class ArticleController {
     }
   }
 
-  public async getAllArticles(req: Request, res: Response) {
+  public async findAllArticles(req: Request, res: Response) {
     try {
       const { query } = new AllArticleRequest(req)
-      const articles = await this.articleService.getAll(query)
-      const response = new AllArticlesResponse(articles)
+      const input = new FindAllArticlesInput(query)
+      const output = await this.findAllArticlesUseCase.handle(input)
+      const response = new FindAllArticlesResponse(output)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
       if (error instanceof NotFoundError) {
@@ -57,8 +76,9 @@ export class ArticleController {
 
   public async deleteArticle(req: Request, res: Response) {
     try {
-      const article = await this.articleService.delete(req.params.id)
-      const response = new ArticleIdResponse(article)
+      const input = new DeleteArticleInput(req.params.id)
+      const output = await this.deleteArticleUseCase.handle(input)
+      const response = new DeleteArticleResponse(output)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
       if (error instanceof NotFoundError) {
@@ -75,8 +95,9 @@ export class ArticleController {
   public async editArticle(req: Request, res: Response) {
     try {
       const { body } = new EditArticleRequest(req)
-      const article = await this.articleService.edit(req.params.id, body)
-      const response = new ArticleIdResponse(article)
+      const input = new EditArticleInput(req.params.id, body)
+      const output = await this.editArticleUseCase.handle(input)
+      const response = new EditArticleResponse(output)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
       if (error instanceof NotFoundError) {
@@ -96,8 +117,9 @@ export class ArticleController {
   public async createArticle(req: Request, res: Response) {
     try {
       const { body } = new CreateArticleRequest(req)
-      const article = await this.articleService.create(body)
-      const response = new ArticleResponse(article)
+      const input = new CreateArticleInput(body)
+      const output = await this.createArticleUseCase.handle(input)
+      const response = new CreateArticleResponse(output)
       res.status(HTTP_STATUS_CODE.OK).send(JSON.stringify(response))
     } catch (error) {
       if (error instanceof DuplicateIdError) {
