@@ -2,13 +2,13 @@ import { Request } from 'express'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
 import { QueryBodyError } from '../../http/errors/QueryBodyError'
 
-export type editArticleBody = {
+export type createArticleBody = {
   title: string
   content: string
 }
 
-export class EditArticleRequest {
-  readonly body: editArticleBody = {
+export class CreateArticleRequest {
+  readonly body: createArticleBody = {
     title: '',
     content: '',
   }

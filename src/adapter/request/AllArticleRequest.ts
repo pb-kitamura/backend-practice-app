@@ -6,6 +6,7 @@ export type QueryParameters = {
   limit: string
   offset: string
 }
+
 export class AllArticleRequest {
   readonly query: QueryParameters
 

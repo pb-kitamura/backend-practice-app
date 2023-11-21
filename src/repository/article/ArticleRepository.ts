@@ -1,17 +1,19 @@
 import config from '../../config/database'
 import * as mysql from 'mysql2/promise'
 import { IArticleRepository } from './IArticleRepository'
-import { ArticleId } from '../../domain/models/article/valueObject/ArticleId'
-import { ArticleTitle } from '../../domain/models/article/valueObject/ArticleTitle'
-import { ArticleContent } from '../../domain/models/article/valueObject/ArticleContent'
-import { CreatedAt } from '../../domain/models/article/valueObject/CreatedAt'
-import { UpdatedAt } from '../../domain/models/article/valueObject/UpdatedAt'
-import { Article } from '../../domain/models/article/entities/Article'
-import { Articles } from '../../domain/models/article/entities/Articles'
+import { ArticleId } from '../../domain/article/valueObject/ArticleId'
+import { ArticleTitle } from '../../domain/article/valueObject/ArticleTitle'
+import { ArticleContent } from '../../domain/article/valueObject/ArticleContent'
+import { CreatedAt } from '../../domain/article/valueObject/CreatedAt'
+import { UpdatedAt } from '../../domain/article/valueObject/UpdatedAt'
+import { Article } from '../../domain/article/entities/Article'
+import { Articles } from '../../domain/article/entities/Articles'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
+import { editArticleBody } from '../../adapter/request/EditArticleRequest'
+import { createArticleBody } from '../../adapter/request/CreateArticleRequest'
 import { QueryParameters } from '../../adapter/request/AllArticleRequest'
-import { QueryBody } from '../../adapter/request/EditArticleRequest'
+
 interface responseJson extends mysql.RowDataPacket {
   id: string
   title: string
@@ -85,7 +87,7 @@ export class ArticleRepository implements IArticleRepository {
     })
   }
 
-  public async edit(id: ArticleId, body: QueryBody) {
+  public async edit(id: ArticleId, body: editArticleBody) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
@@ -97,6 +99,21 @@ export class ArticleRepository implements IArticleRepository {
         console.error(error)
         throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
       })
+  }
+
+  public async create(id: ArticleId, body: createArticleBody) {
+    const connection = await mysql.createConnection(config.db).catch((error) => {
+      console.error(error)
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
+    })
+    const sql = `INSERT INTO ${this.table}(id,title,content) VALUES(?,?,?)`
+    await connection
+      .execute<responseJson[]>(sql, [id.value, body.title, body.content])
+      .catch((error) => {
+        console.error(error)
+        throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
+      })
+    return this.find(id)
   }
 
   private notFindData(data: object) {
