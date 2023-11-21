@@ -1,25 +1,19 @@
 import { Request } from 'express'
 import { QueryParametersError } from '../../http/errors/QueryParametersError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-import { QueryBodyError } from '../../http/errors/QueryBodyError'
 
 export type QueryParameters = {
   limit: string
   offset: string
 }
-export type QueryBody = {
-  title: string
-  content: string
-}
-export class ArticleRequest {
+export class AllArticleRequest {
   readonly query: QueryParameters
-  readonly body: QueryBody
-  constructor({ query, body }: Request) {
+
+  constructor({ query }: Request) {
     this.query = {
       limit: (query.limit as string | undefined) ?? '50',
       offset: (query.offset as string | undefined) ?? '0',
     }
-    this.body = body
     if (Number(this.query.limit) > 50 || Number(this.query.limit) < 0)
       throw new QueryParametersError(
         `${HTTP_ERROR_MESSAGE.QueryParametersError} limitは0以上50以下`,
@@ -34,8 +28,5 @@ export class ArticleRequest {
       throw new QueryParametersError(
         `${HTTP_ERROR_MESSAGE.QueryParametersError} limitは数字である必要がある`,
       )
-    if (Object.keys(body).length !== 0) {
-      if (!body.title) throw new QueryBodyError(HTTP_ERROR_MESSAGE.QueryBodyError)
-    }
   }
 }

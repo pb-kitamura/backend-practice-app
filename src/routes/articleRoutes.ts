@@ -11,3 +11,6 @@ articleRouter.get('/', (req, res) => {
 articleRouter.delete('/:id', (req, res) => {
   articleController.deleteArticle(res, req.params.id)
 })
+articleRouter.put('/:id', (req, res) => {
+  articleController.editArticle(res, req)
+})

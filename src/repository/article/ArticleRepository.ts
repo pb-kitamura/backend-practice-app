@@ -10,8 +10,8 @@ import { Article } from '../../domain/models/article/entities/Article'
 import { Articles } from '../../domain/models/article/entities/Articles'
 import { DataBaseError } from '../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-import { QueryParameters } from '../../adapter/request/ArticleRequest'
-
+import { QueryParameters } from '../../adapter/request/AllArticleRequest'
+import { QueryBody } from '../../adapter/request/EditArticleRequest'
 interface responseJson extends mysql.RowDataPacket {
   id: string
   title: string
@@ -23,11 +23,13 @@ interface responseJson extends mysql.RowDataPacket {
 export class ArticleRepository implements IArticleRepository {
   private table = 'article'
   public async find(id: ArticleId) {
-    const connection = await mysql.createConnection(config.db).catch(() => {
+    const connection = await mysql.createConnection(config.db).catch((error) => {
+      console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
     const sql = `SELECT * FROM ${this.table} WHERE id = ?`
-    const [result] = await connection.execute<responseJson[]>(sql, [id.value]).catch(() => {
+    const [result] = await connection.execute<responseJson[]>(sql, [id.value]).catch((error) => {
+      console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
     })
     if (this.notFindData(result)) {
@@ -43,13 +45,15 @@ export class ArticleRepository implements IArticleRepository {
   }
 
   public async findAll(query: QueryParameters) {
-    const connection = await mysql.createConnection(config.db).catch(() => {
+    const connection = await mysql.createConnection(config.db).catch((error) => {
+      console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
     const sql = `SELECT * FROM ${this.table} LIMIT ? OFFSET ?`
     const [result] = await connection
       .execute<responseJson[]>(sql, [query.limit, query.offset])
-      .catch(() => {
+      .catch((error) => {
+        console.error(error)
         throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
       })
     if (this.notFindData(result)) {
@@ -70,13 +74,29 @@ export class ArticleRepository implements IArticleRepository {
   }
 
   public async delete(id: ArticleId) {
-    const connection = await mysql.createConnection(config.db).catch(() => {
+    const connection = await mysql.createConnection(config.db).catch((error) => {
+      console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
     const sql = `DELETE FROM ${this.table} WHERE id = ?`
-    await connection.execute<responseJson[]>(sql, [id.value]).catch(() => {
+    await connection.execute<responseJson[]>(sql, [id.value]).catch((error) => {
+      console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
     })
+  }
+
+  public async edit(id: ArticleId, body: QueryBody) {
+    const connection = await mysql.createConnection(config.db).catch((error) => {
+      console.error(error)
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
+    })
+    const sql = `UPDATE ${this.table} SET title = ?, content = ? WHERE id = ?`
+    await connection
+      .execute<responseJson[]>(sql, [body.title, body.content, id.value])
+      .catch((error) => {
+        console.error(error)
+        throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
+      })
   }
 
   private notFindData(data: object) {
