@@ -64,7 +64,7 @@ export class ArticleRepository implements IArticleRepository {
     if (this.notFindData(result)) {
       return new Articles([], 0)
     }
-    const totalArticleCountSql = `SELECT COUNT(*)as total FROM ${this.table}`
+    const totalArticleCountSql = `SELECT COUNT(*) AS total FROM ${this.table}`
     const [count] = await connection.execute<totalJson[]>(totalArticleCountSql).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
