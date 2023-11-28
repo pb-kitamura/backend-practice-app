@@ -1,4 +1,4 @@
-import { ArticleRepository } from '../../../infrastructure/repository/article/ArticleRepository'
+import { IArticleRepository } from '../../../domain/article/repository/IArticleRepository'
 import { FindAllArticlesInput } from '../input/FindAllArticlesInput'
 import { FindAllArticlesOutput } from '../output/FindAllArticlesOutput'
 import { NotFoundError } from '../../../http/errors/NotFoundError'
@@ -9,7 +9,7 @@ export interface FindAllArticlesUseCase {
 }
 
 export class FindAllArticlesInteractor implements FindAllArticlesUseCase {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(private readonly articleRepository: IArticleRepository) {}
   async handle(input: FindAllArticlesInput) {
     const query = input.getQueryParameters()
     const result = await this.articleRepository.findAll(query)

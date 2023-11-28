@@ -1,4 +1,4 @@
-import { IArticleRepository } from '../../../infrastructure/repository/article/IArticleRepository'
+import { IArticleRepository } from '../../../domain/article/repository/IArticleRepository'
 import { FindArticleInput } from '../input/FindArticleInput'
 import { FindArticleOutput } from '../output/FindArticleOutput'
 import { NotFoundError } from '../../../http/errors/NotFoundError'

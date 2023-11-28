@@ -1,4 +1,4 @@
-import { ArticleRepository } from '../../../infrastructure/repository/article/ArticleRepository'
+import { IArticleRepository } from '../../../domain/article/repository/IArticleRepository'
 import { DeleteArticleInput } from '../input/DeleteArticleInput'
 import { DeleteArticleOutput } from '../output/DeleteArticleOutput'
 import { NotFoundError } from '../../../http/errors/NotFoundError'
@@ -8,7 +8,7 @@ export interface DeleteArticleUseCase {
 }
 
 export class DeleteArticleInteractor implements DeleteArticleUseCase {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(private readonly articleRepository: IArticleRepository) {}
 
   async handle(input: DeleteArticleInput) {
     const articleId = input.getArticleId()

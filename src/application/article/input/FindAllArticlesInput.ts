@@ -1,7 +1,10 @@
-import { QueryParameters } from '../../../adapter/request/AllArticleRequest'
+export type QueryParametersInput = {
+  limit: string
+  offset: string
+}
 
 export class FindAllArticlesInput {
-  constructor(private readonly queryParam: QueryParameters) {}
+  constructor(private readonly queryParam: QueryParametersInput) {}
   getQueryParameters() {
     return this.queryParam
   }

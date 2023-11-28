@@ -1,4 +1,4 @@
-import { IArticleRepository } from '../../../infrastructure/repository/article/IArticleRepository'
+import { IArticleRepository } from '../../../domain/article/repository/IArticleRepository'
 import { CreateArticleInput } from '../input/CreateArticleInput'
 import { CreateArticleOutput } from '../output/CreateArticleOutput'
 import { DuplicateIdError } from '../../../http/errors/DuplicateIdError'

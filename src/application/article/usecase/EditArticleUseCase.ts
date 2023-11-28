@@ -1,6 +1,6 @@
 import { NotFoundError } from '../../../http/errors/NotFoundError'
 import { HTTP_ERROR_MESSAGE } from '../../../http/httpStatus'
-import { ArticleRepository } from '../../../infrastructure/repository/article/ArticleRepository'
+import { IArticleRepository } from '../../../domain/article/repository/IArticleRepository'
 import { EditArticleInput } from '../input/EditArticleInput'
 import { EditArticleOutput } from '../output/EditArticleOutput'
 
@@ -9,7 +9,7 @@ export interface EditArticleUseCase {
 }
 
 export class EditArticleInteractor implements EditArticleUseCase {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(private readonly articleRepository: IArticleRepository) {}
 
   async handle(input: EditArticleInput) {
     const articleId = input.getArticleId()

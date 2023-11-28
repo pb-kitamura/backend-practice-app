@@ -1,6 +1,6 @@
 import config from '../../../config/database'
 import * as mysql from 'mysql2/promise'
-import { IArticleRepository } from './IArticleRepository'
+import { IArticleRepository } from '../../../domain/article/repository/IArticleRepository'
 import { ArticleId } from '../../../domain/article/valueObject/ArticleId'
 import { ArticleTitle } from '../../../domain/article/valueObject/ArticleTitle'
 import { ArticleContent } from '../../../domain/article/valueObject/ArticleContent'
@@ -10,9 +10,9 @@ import { Article } from '../../../domain/article/entities/Article'
 import { Articles } from '../../../domain/article/entities/Articles'
 import { DataBaseError } from '../../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../../http/httpStatus'
-import { editArticleBody } from '../../../adapter/request/EditArticleRequest'
-import { createArticleBody } from '../../../adapter/request/CreateArticleRequest'
-import { QueryParameters } from '../../../adapter/request/AllArticleRequest'
+import { editArticleBody } from '../../../domain/article/repository/IArticleRepository'
+import { createArticleBody } from '../../../domain/article/repository/IArticleRepository'
+import { QueryParameters } from '../../../domain/article/repository/IArticleRepository'
 
 interface responseJson extends mysql.RowDataPacket {
   id: string
