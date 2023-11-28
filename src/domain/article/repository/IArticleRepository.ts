@@ -1,16 +1,5 @@
-import { ArticleId } from '../valueObject/ArticleId'
 import { Article } from '../entities/Article'
 import { Articles } from '../entities/Articles'
-
-export type editArticleBody = {
-  title: string
-  content: string
-}
-
-export type createArticleBody = {
-  title: string
-  content: string
-}
 
 export type QueryParameters = {
   limit: string
@@ -18,9 +7,9 @@ export type QueryParameters = {
 }
 
 export interface IArticleRepository {
-  find(id: ArticleId): Promise<Article | null>
+  find(article: Article): Promise<Article | null>
   findAll(query: QueryParameters): Promise<Articles | null>
-  delete(id: ArticleId): Promise<void>
-  edit(id: ArticleId, body: editArticleBody): Promise<void>
-  create(id: ArticleId, body: createArticleBody): Promise<Article | null>
+  delete(article: Article): Promise<void>
+  edit(article: Article): Promise<void>
+  create(article: Article): Promise<Article | null>
 }

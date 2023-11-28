@@ -13,13 +13,12 @@ export class CreateArticleInteractor implements CreateArticleUseCase {
   constructor(private readonly articleRepository: IArticleRepository) {}
 
   async handle(input: CreateArticleInput) {
-    const articleId = input.getArticleId()
-    const result = await this.articleRepository.find(articleId)
+    const article = input.getArticle()
+    const result = await this.articleRepository.find(article)
     if (result) {
       throw new DuplicateIdError(HTTP_ERROR_MESSAGE.DuplicateIdError)
     }
-    const body = input.getBody()
-    const newArticle = await this.articleRepository.create(articleId, body)
+    const newArticle = await this.articleRepository.create(article)
     if (!newArticle) {
       throw new NotFoundError(HTTP_ERROR_MESSAGE.NotFound)
     }

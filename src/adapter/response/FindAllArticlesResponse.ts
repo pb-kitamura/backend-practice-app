@@ -6,9 +6,8 @@ export class FindAllArticlesResponse {
   readonly total
 
   constructor(output: FindAllArticlesOutput) {
-    output.item.items.map((article) => {
-      const response = new FindArticleResponse(new FindArticleOutput(article))
-      this.items.push(response)
+    this.items = output.item.items.map((article) => {
+      return new FindArticleResponse(new FindArticleOutput(article))
     })
     this.total = output.item.total
   }

@@ -12,13 +12,12 @@ export class EditArticleInteractor implements EditArticleUseCase {
   constructor(private readonly articleRepository: IArticleRepository) {}
 
   async handle(input: EditArticleInput) {
-    const articleId = input.getArticleId()
-    const result = await this.articleRepository.find(articleId)
+    const article = input.getArticle()
+    const result = await this.articleRepository.find(article)
     if (!result) {
       throw new NotFoundError(HTTP_ERROR_MESSAGE.NotFound)
     }
-    const body = input.getBody()
-    await this.articleRepository.edit(articleId, body)
+    await this.articleRepository.edit(article)
     return new EditArticleOutput(result)
   }
 }

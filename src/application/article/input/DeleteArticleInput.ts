@@ -1,9 +1,20 @@
+import { Article } from '../../../domain/article/entities/Article'
+import { ArticleContent } from '../../../domain/article/valueObject/ArticleContent'
 import { ArticleId } from '../../../domain/article/valueObject/ArticleId'
+import { ArticleTitle } from '../../../domain/article/valueObject/ArticleTitle'
+import { CreatedAt } from '../../../domain/article/valueObject/CreatedAt'
+import { UpdatedAt } from '../../../domain/article/valueObject/UpdatedAt'
 
 export class DeleteArticleInput {
   constructor(private readonly id: string) {}
-  getArticleId() {
-    const articleId = new ArticleId(this.id)
-    return articleId
+  getArticle() {
+    const article = new Article(
+      new ArticleId(this.id),
+      new ArticleTitle(),
+      new ArticleContent(),
+      new CreatedAt(),
+      new UpdatedAt(),
+    )
+    return article
   }
 }

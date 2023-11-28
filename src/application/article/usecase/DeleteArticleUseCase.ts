@@ -11,12 +11,12 @@ export class DeleteArticleInteractor implements DeleteArticleUseCase {
   constructor(private readonly articleRepository: IArticleRepository) {}
 
   async handle(input: DeleteArticleInput) {
-    const articleId = input.getArticleId()
-    const result = await this.articleRepository.find(articleId)
+    const article = input.getArticle()
+    const result = await this.articleRepository.find(article)
     if (!result) {
       throw new NotFoundError(HTTP_ERROR_MESSAGE.NotFound)
     }
-    await this.articleRepository.delete(articleId)
+    await this.articleRepository.delete(article)
     return new DeleteArticleOutput(result)
   }
 }

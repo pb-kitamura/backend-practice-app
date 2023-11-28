@@ -10,8 +10,8 @@ export interface FindArticleUseCase {
 export class FindArticleInteractor implements FindArticleUseCase {
   constructor(private readonly artiicleRepository: IArticleRepository) {}
   async handle(input: FindArticleInput) {
-    const articleId = input.getArticleId()
-    const result = await this.artiicleRepository.find(articleId)
+    const article = input.getArticle()
+    const result = await this.artiicleRepository.find(article)
     if (!result) {
       throw new NotFoundError(HTTP_ERROR_MESSAGE.NotFound)
     }

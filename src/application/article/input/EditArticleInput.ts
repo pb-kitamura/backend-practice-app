@@ -1,4 +1,9 @@
+import { Article } from '../../../domain/article/entities/Article'
+import { ArticleContent } from '../../../domain/article/valueObject/ArticleContent'
 import { ArticleId } from '../../../domain/article/valueObject/ArticleId'
+import { ArticleTitle } from '../../../domain/article/valueObject/ArticleTitle'
+import { CreatedAt } from '../../../domain/article/valueObject/CreatedAt'
+import { UpdatedAt } from '../../../domain/article/valueObject/UpdatedAt'
 
 export type editArticleBodyInput = {
   title: string
@@ -10,11 +15,14 @@ export class EditArticleInput {
     private readonly id: string,
     private readonly body: editArticleBodyInput,
   ) {}
-  getArticleId() {
-    const articleId = new ArticleId(this.id)
-    return articleId
-  }
-  getBody() {
-    return this.body
+  getArticle() {
+    const article = new Article(
+      new ArticleId(this.id),
+      new ArticleTitle(this.body.title),
+      new ArticleContent(this.body.content),
+      new CreatedAt(),
+      new UpdatedAt(),
+    )
+    return article
   }
 }
