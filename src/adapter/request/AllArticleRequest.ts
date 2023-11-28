@@ -1,14 +1,9 @@
 import { Request } from 'express'
 import { QueryParametersError } from '../../http/errors/QueryParametersError'
 import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-
-export type QueryParameters = {
-  limit: string
-  offset: string
-}
-
+import { QueryParametersInput } from '../../application/article/input/FindAllArticlesInput'
 export class AllArticleRequest {
-  readonly query: QueryParameters
+  readonly query: QueryParametersInput
 
   constructor({ query }: Request) {
     this.query = {

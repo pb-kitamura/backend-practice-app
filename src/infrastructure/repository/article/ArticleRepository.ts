@@ -1,18 +1,15 @@
-import config from '../../config/database'
+import config from '../../../config/database'
 import * as mysql from 'mysql2/promise'
-import { IArticleRepository } from './IArticleRepository'
-import { ArticleId } from '../../domain/article/valueObject/ArticleId'
-import { ArticleTitle } from '../../domain/article/valueObject/ArticleTitle'
-import { ArticleContent } from '../../domain/article/valueObject/ArticleContent'
-import { CreatedAt } from '../../domain/article/valueObject/CreatedAt'
-import { UpdatedAt } from '../../domain/article/valueObject/UpdatedAt'
-import { Article } from '../../domain/article/entities/Article'
-import { Articles } from '../../domain/article/entities/Articles'
-import { DataBaseError } from '../../http/errors/DataBaseError'
-import { HTTP_ERROR_MESSAGE } from '../../http/httpStatus'
-import { editArticleBody } from '../../adapter/request/EditArticleRequest'
-import { createArticleBody } from '../../adapter/request/CreateArticleRequest'
-import { QueryParameters } from '../../adapter/request/AllArticleRequest'
+import { IArticleRepository } from '../../../domain/article/repository/IArticleRepository'
+import { ArticleId } from '../../../domain/article/valueObject/ArticleId'
+import { ArticleTitle } from '../../../domain/article/valueObject/ArticleTitle'
+import { ArticleContent } from '../../../domain/article/valueObject/ArticleContent'
+import { CreatedAt } from '../../../domain/article/valueObject/CreatedAt'
+import { UpdatedAt } from '../../../domain/article/valueObject/UpdatedAt'
+import { Article } from '../../../domain/article/entities/Article'
+import { Articles } from '../../../domain/article/entities/Articles'
+import { DataBaseError } from '../../../http/errors/DataBaseError'
+import { HTTP_ERROR_MESSAGE } from '../../../http/httpStatus'
 
 interface responseJson extends mysql.RowDataPacket {
   id: string
@@ -22,18 +19,24 @@ interface responseJson extends mysql.RowDataPacket {
   updatedAt: string
 }
 
+interface totalJson extends mysql.RowDataPacket {
+  total: number
+}
+
 export class ArticleRepository implements IArticleRepository {
   private table = 'article'
-  public async find(id: ArticleId) {
+  public async find(article: Article) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
     const sql = `SELECT * FROM ${this.table} WHERE id = ?`
-    const [result] = await connection.execute<responseJson[]>(sql, [id.value]).catch((error) => {
-      console.error(error)
-      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
-    })
+    const [result] = await connection
+      .execute<responseJson[]>(sql, [article.id.value])
+      .catch((error) => {
+        console.error(error)
+        throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
+      })
     if (this.notFindData(result)) {
       return null
     }
@@ -46,21 +49,27 @@ export class ArticleRepository implements IArticleRepository {
     )
   }
 
-  public async findAll(query: QueryParameters) {
+  public async findAll(articles: Articles) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
-    const sql = `SELECT * FROM ${this.table} LIMIT ? OFFSET ?`
+    const articleGetSql = `SELECT * FROM ${this.table} LIMIT ? OFFSET ?`
     const [result] = await connection
-      .execute<responseJson[]>(sql, [query.limit, query.offset])
+      .execute<responseJson[]>(articleGetSql, [articles.limit, articles.offset])
       .catch((error) => {
         console.error(error)
         throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
       })
     if (this.notFindData(result)) {
-      return null
+      return new Articles([], 0)
     }
+    const totalArticleCountSql = `SELECT COUNT(*) AS total FROM ${this.table}`
+    const [count] = await connection.execute<totalJson[]>(totalArticleCountSql).catch((error) => {
+      console.error(error)
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
+    })
+    const total = count[0].total
     const items = result.map((item) => {
       const articleItem = new Article(
         new ArticleId(item.id),
@@ -71,49 +80,48 @@ export class ArticleRepository implements IArticleRepository {
       )
       return articleItem
     })
-    const articles = new Articles(items, items.length)
-    return articles
+    return new Articles(items, total)
   }
 
-  public async delete(id: ArticleId) {
+  public async delete(article: Article) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
     const sql = `DELETE FROM ${this.table} WHERE id = ?`
-    await connection.execute<responseJson[]>(sql, [id.value]).catch((error) => {
+    await connection.execute<responseJson[]>(sql, [article.id.value]).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
     })
   }
 
-  public async edit(id: ArticleId, body: editArticleBody) {
+  public async edit(article: Article) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
     const sql = `UPDATE ${this.table} SET title = ?, content = ? WHERE id = ?`
     await connection
-      .execute<responseJson[]>(sql, [body.title, body.content, id.value])
+      .execute<responseJson[]>(sql, [article.title.value, article.content.value, article.id.value])
       .catch((error) => {
         console.error(error)
         throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
       })
   }
 
-  public async create(id: ArticleId, body: createArticleBody) {
+  public async create(article: Article) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
     const sql = `INSERT INTO ${this.table}(id,title,content) VALUES(?,?,?)`
     await connection
-      .execute<responseJson[]>(sql, [id.value, body.title, body.content])
+      .execute<responseJson[]>(sql, [article.id.value, article.title.value, article.content.value])
       .catch((error) => {
         console.error(error)
         throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
       })
-    return this.find(id)
+    return this.find(article)
   }
 
   private notFindData(data: object) {
