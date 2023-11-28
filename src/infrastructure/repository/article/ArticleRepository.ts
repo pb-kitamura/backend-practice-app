@@ -10,7 +10,6 @@ import { Article } from '../../../domain/article/entities/Article'
 import { Articles } from '../../../domain/article/entities/Articles'
 import { DataBaseError } from '../../../http/errors/DataBaseError'
 import { HTTP_ERROR_MESSAGE } from '../../../http/httpStatus'
-import { QueryParameters } from '../../../domain/article/repository/IArticleRepository'
 
 interface responseJson extends mysql.RowDataPacket {
   id: string
@@ -50,28 +49,26 @@ export class ArticleRepository implements IArticleRepository {
     )
   }
 
-  public async findAll(query: QueryParameters) {
+  public async findAll(articles: Articles) {
     const connection = await mysql.createConnection(config.db).catch((error) => {
       console.error(error)
       throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseConnectionError)
     })
     const articleGetSql = `SELECT * FROM ${this.table} LIMIT ? OFFSET ?`
     const [result] = await connection
-      .execute<responseJson[]>(articleGetSql, [query.limit, query.offset])
+      .execute<responseJson[]>(articleGetSql, [articles.limit, articles.offset])
       .catch((error) => {
         console.error(error)
         throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
       })
     if (this.notFindData(result)) {
-      return null
+      return new Articles([], 0)
     }
     const totalArticleCountSql = `SELECT COUNT(*)as total FROM ${this.table}`
-    const [count] = await connection
-      .execute<totalJson[]>(totalArticleCountSql, [query.limit, query.offset])
-      .catch((error) => {
-        console.error(error)
-        throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
-      })
+    const [count] = await connection.execute<totalJson[]>(totalArticleCountSql).catch((error) => {
+      console.error(error)
+      throw new DataBaseError(HTTP_ERROR_MESSAGE.DataBaseQueryError)
+    })
     const total = count[0].total
     const items = result.map((item) => {
       const articleItem = new Article(
@@ -83,8 +80,7 @@ export class ArticleRepository implements IArticleRepository {
       )
       return articleItem
     })
-    const articles = new Articles(items, total)
-    return articles
+    return new Articles(items, total)
   }
 
   public async delete(article: Article) {

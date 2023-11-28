@@ -11,9 +11,9 @@ export interface FindAllArticlesUseCase {
 export class FindAllArticlesInteractor implements FindAllArticlesUseCase {
   constructor(private readonly articleRepository: IArticleRepository) {}
   async handle(input: FindAllArticlesInput) {
-    const query = input.getQueryParameters()
-    const result = await this.articleRepository.findAll(query)
-    if (!result) {
+    const articles = input.getArticles()
+    const result = await this.articleRepository.findAll(articles)
+    if (result.total === 0) {
       throw new NotFoundError(HTTP_ERROR_MESSAGE.NotFound)
     }
     return new FindAllArticlesOutput(result)
